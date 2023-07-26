@@ -7,6 +7,13 @@ pipeline {
               sh "mvn clean package"
               archive 'target/*.jar'
             }
-        }   
+        }  
+
+        stage('maven test') {
+            steps {
+              sh "mvn test"
+              
+            }
+        }  
     }
 }
