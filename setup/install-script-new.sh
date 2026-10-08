@@ -56,6 +56,14 @@ esac
 
 export DEBIAN_FRONTEND=noninteractive
 
+# Remove obsolete repositories from previous installations.
+rm -f /etc/apt/sources.list.d/kubernetes.list
+rm -f /etc/apt/sources.list.d/jenkins.list
+
+# Remove old Jenkins signing keys.
+rm -f /etc/apt/keyrings/jenkins-keyring.asc
+rm -f /usr/share/keyrings/jenkins-keyring.asc
+
 log "SYSTEM INFORMATION"
 echo "Ubuntu: ${PRETTY_NAME}"
 echo "Kernel: $(uname -r)"
