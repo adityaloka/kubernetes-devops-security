@@ -38,5 +38,14 @@ pipeline {
         always {
             echo 'Pipeline execution completed.'
         }
+
+        stage('Kubernetes Deployment - DEV') {
+           steps {
+              withKubeConfig([credentialsId: 'kubeconfig']) {
+                 sh "sed -i 's#replace#adityalokapalli309/numeric-app:${GIT_COMMIT}#g' k8s_deployment_service.yaml"
+                 sh "kubectl apply -f k8s_deployment_service.yaml"
+                }
+            }
+         }
     }
 }
