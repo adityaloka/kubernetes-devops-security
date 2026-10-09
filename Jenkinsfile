@@ -26,9 +26,21 @@ pipeline {
 
         stage('Docker Build and Push') {
             steps {
-                withDockerRegistry(credentialsId: 'docker-hub-pass', url: '') {
-                    sh 'docker build -t adityalokapalli309/numeric-app:"$GIT_COMMIT" .'
-                    sh 'docker push adityalokapalli309/numeric-app:"$GIT_COMMIT"'
+                withDockerRegistry(credentialsId: 'docker-hub', url: '') {
+                    sh 'docker build -t adityalokapalli309/numeric-app:${GIT_COMMIT} .'
+                    sh 'docker push adityalokapalli309/numeric-app:${GIT_COMMIT}'
+                }
+            }
+        }
+
+        stage('Kubernetes Deployment - DEV') {
+            steps {
+                withKubeConfig([credentialsId: 'kubeconfig']) {
+                    sh '''
+                        kubectl set image deployment/node-app \
+                          numeric-app=adityalokapalli309/numeric-app:${GIT_COMMIT}
+                        kubectl rollout status deployment/node-app
+                    '''
                 }
             }
         }
@@ -38,14 +50,5 @@ pipeline {
         always {
             echo 'Pipeline execution completed.'
         }
-
-        stage('Kubernetes Deployment - DEV') {
-           steps {
-              withKubeConfig([credentialsId: 'kubeconfig']) {
-                 sh "sed -i 's#replace#adityalokapalli309/numeric-app:${GIT_COMMIT}#g' k8s_deployment_service.yaml"
-                 sh "kubectl apply -f k8s_deployment_service.yaml"
-                }
-            }
-         }
     }
 }
