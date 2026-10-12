@@ -44,6 +44,25 @@ pipeline {
                 }
             }
         }
+
+        stage('Check Java Environment') {
+            steps {
+                sh 'java -version'
+                sh 'mvn -version'
+                sh 'echo $JAVA_HOME'
+            }
+        }
+
+        stage('Mutation Tests - PIT') {
+            steps {
+                sh 'mvn test-compile org.pitest:pitest-maven:mutationCoverage'
+            }
+            post {
+                always {
+                    pitmutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
+                }
+            }
+        }
     }
 
     post {
