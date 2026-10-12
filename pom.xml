@@ -101,6 +101,7 @@
 
 					<timestampedReports>false</timestampedReports>
 					<threads>2</threads>
+					<verbose>true</verbose>
 				</configuration>
 			</plugin>
 
