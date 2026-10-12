@@ -84,11 +84,23 @@
 				</dependencies>
 
 				<configuration>
+					<targetClasses>
+						<param>com.devsecops.*</param>
+					</targetClasses>
+
+					<targetTests>
+						<param>com.devsecops.*</param>
+					</targetTests>
+
 					<mutationThreshold>70</mutationThreshold>
+
 					<outputFormats>
-						<outputFormat>XML</outputFormat>
-						<outputFormat>HTML</outputFormat>
+						<param>XML</param>
+						<param>HTML</param>
 					</outputFormats>
+
+					<timestampedReports>false</timestampedReports>
+					<threads>2</threads>
 				</configuration>
 			</plugin>
 
