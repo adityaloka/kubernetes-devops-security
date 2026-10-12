@@ -44,17 +44,18 @@ pipeline {
                 }
             }
         }
-    }
 
-    stage('Mutation Tests - PIT') {
-        steps {
-            sh 'mvn test-compile org.pitest:pitest-maven:mutationCoverage'
-        }
-        post {
-            always {
-                pitmutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
+        stage('Mutation Tests - PIT') {
+            steps {
+                sh 'mvn test-compile org.pitest:pitest-maven:mutationCoverage'
+            }
+            post {
+                always {
+                    pitmutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
+                }
             }
         }
+
     }
 
     post {
