@@ -24,6 +24,39 @@ pipeline {
             }
         }
 
+        stage('Vulnerability Scan - Docker') {
+            parallel {
+                stage('OWASP Dependency-Check') {
+                    steps {
+                        withCredentials([
+                    string(
+                        credentialsId: 'nvd-api-key',
+                        variable: 'NVD_API_KEY'
+                    )
+                ]) {
+                            sh '''
+                        mvn org.owasp:dependency-check-maven:12.1.0:check \
+                          -DnvdApiKey="$NVD_API_KEY"
+                    '''
+                }
+                    }
+                    post {
+                        always {
+                            dependencyCheckPublisher(
+                        pattern: 'target/dependency-check-report.xml'
+                    )
+                        }
+                    }
+                }
+
+                stage('Trivy Image Scan') {
+                    steps {
+                        sh 'bash trivy-docker-image-scan.sh'
+                    }
+                }
+            }
+        }
+
         stage('Docker Build and Push') {
             steps {
                 withDockerRegistry(credentialsId: 'docker-hub-pass', url: '') {
@@ -69,13 +102,12 @@ pipeline {
                 withSonarQubeEnv('SonarQube') {
                     sh '''
                 mvn org.sonarsource.scanner.maven:sonar-maven-plugin:5.3.0.6276:sonar \
-                  -Dsonar.projectKey=numeric-application \
-                  -Dsonar.projectName=numeric-application
+                  -Dsonar.projectKey=numeric-app \
+                  -Dsonar.projectName=numeric-app
             '''
                 }
             }
         }
-
     }
 
     post {
