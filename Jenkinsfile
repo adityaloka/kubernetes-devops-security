@@ -26,7 +26,15 @@ pipeline {
 
         stage('Vulnerability Scan - Docker') {
             steps {
-                sh 'mvn org.owasp:dependency-check-maven:6.1.6:check'
+                withCredentials([
+            string(credentialsId: 'nvd-api-key',
+                   variable: 'NVD_API_KEY')
+        ]) {
+                    sh '''
+                mvn org.owasp:dependency-check-maven:12.1.0:check \
+                  -DnvdApiKey="$NVD_API_KEY"
+            '''
+        }
             }
             post {
                 always {
