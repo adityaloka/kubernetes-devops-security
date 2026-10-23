@@ -63,6 +63,19 @@ pipeline {
                 }
             }
         }
+
+        stage('SonarQube - SAST') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                mvn org.sonarsource.scanner.maven:sonar-maven-plugin:5.3.0.6276:sonar \
+                  -Dsonar.projectKey=numeric-application \
+                  -Dsonar.projectName=numeric-application
+            '''
+                }
+            }
+        }
+
     }
 
     post {
