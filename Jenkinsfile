@@ -24,6 +24,19 @@ pipeline {
             }
         }
 
+        stage('Vulnerability Scan - Docker') {
+            steps {
+                sh 'mvn org.owasp:dependency-check-maven:6.1.6:check'
+            }
+            post {
+                always {
+                    dependencyCheckPublisher(
+                pattern: 'target/dependency-check-report.xml'
+            )
+                }
+            }
+        }
+
         stage('Docker Build and Push') {
             steps {
                 withDockerRegistry(credentialsId: 'docker-hub-pass', url: '') {
@@ -75,7 +88,6 @@ pipeline {
                 }
             }
         }
-
     }
 
     post {
