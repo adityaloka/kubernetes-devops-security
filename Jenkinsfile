@@ -63,7 +63,22 @@ pipeline {
                 }
             }
         }
-    }
+
+        stage('SonarQube - SAST') {
+           steps {
+               withSonarQubeEnv('SonarQube') {
+                 sh '''
+                   mvn sonar:sonar \
+                  -Dsonar.projectKey=numeric-application \
+                  -Dsonar.projectName=numeric-application
+            '''
+                }
+            }
+        }
+
+
+
+     }
 
     post {
         always {
