@@ -25,22 +25,34 @@ pipeline {
         }
 
         stage('Vulnerability Scan - Docker') {
-            steps {
-                withCredentials([
-            string(credentialsId: 'nvd-api-key',
-                   variable: 'NVD_API_KEY')
-        ]) {
-                    sh '''
-                mvn org.owasp:dependency-check-maven:12.1.0:check \
-                  -DnvdApiKey="$NVD_API_KEY"
-            '''
-        }
-            }
-            post {
-                always {
-                    dependencyCheckPublisher(
-                pattern: 'target/dependency-check-report.xml'
-            )
+            parallel {
+                stage('OWASP Dependency-Check') {
+                    steps {
+                        withCredentials([
+                    string(
+                        credentialsId: 'nvd-api-key',
+                        variable: 'NVD_API_KEY'
+                    )
+                ]) {
+                            sh '''
+                        mvn org.owasp:dependency-check-maven:12.1.0:check \
+                          -DnvdApiKey="$NVD_API_KEY"
+                    '''
+                }
+                    }
+                    post {
+                        always {
+                            dependencyCheckPublisher(
+                        pattern: 'target/dependency-check-report.xml'
+                    )
+                        }
+                    }
+                }
+
+                stage('Trivy Image Scan') {
+                    steps {
+                        sh 'bash trivy-docker-image-scan.sh'
+                    }
                 }
             }
         }
