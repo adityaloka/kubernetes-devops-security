@@ -33,10 +33,11 @@ pipeline {
                         credentialsId: 'nvd-api-key',
                         variable: 'NVD_API_KEY'
                     )
-                ]) {
-                            sh '''
+                ]) {{
+                    sh '''
                         mvn org.owasp:dependency-check-maven:12.1.0:check \
-                          -DnvdApiKey="$NVD_API_KEY"
+                          -DnvdApiKey="$NVD_API_KEY" \
+                          -DossindexAnalyzerEnabled=false
                     '''
                 }
                     }
