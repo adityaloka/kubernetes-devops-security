@@ -31,8 +31,12 @@
 
 	<!-- Dependencies -->
 	<dependencies>
-
 		<!-- Spring Boot Web -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
 		<!-- Unit Testing: Spring Boot 4 + JUnit 5 + MVC testing -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
