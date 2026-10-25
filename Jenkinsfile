@@ -55,15 +55,13 @@ pipeline {
                         sh 'bash trivy-docker-image-scan.sh'
                     }
 
-                "OPA Conftest": {
-    sh 'docker run --rm -v "$(pwd):/project" openpolicyagent/conftest test --policy docker-security.rego Dockerfile'
-}
-                    "OPA Conftest": {
-                    sh 'docker run --rm -v "$(pwd):/project" openpolicyagent/conftest test --policy docker-security.rego Dockerfile'
-                             }
+                stage('OPA Conftest') {
+                      steps {
+                     sh 'docker run --rm -v "$(pwd):/project" openpolicyagent/conftest test --policy docker-security.rego Dockerfile'
+
+                      }
                 }
-            }
-        }
+                }
 
         stage('Docker Build and Push') {
             steps {
@@ -116,11 +114,11 @@ pipeline {
                 }
             }
         }
-    }
+            }
 
     post {
         always {
             echo 'Pipeline execution completed.'
         }
     }
-}
+        }
